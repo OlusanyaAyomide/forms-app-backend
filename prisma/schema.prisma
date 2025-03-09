@@ -37,19 +37,19 @@ model Member {
 }
 
 model CompanyMember {
-  company   Company  @relation(fields: [companyId], references: [id])
-  companyId String
-  joined_at DateTime @default(now())
-  member    Member   @relation(fields: [memberId], references: [id])
-  memberId  String
+  company    Company  @relation(fields: [company_id], references: [id])
+  company_id String
+  joined_at  DateTime @default(now())
+  member     Member   @relation(fields: [member_id], references: [id])
+  member_id  String
 
-  @@id([companyId, memberId])
+  @@id([company_id, member_id])
 }
 
 model Quiz {
   id                      String           @id @unique @default(uuid())
-  Company                 Company?         @relation(fields: [companyId], references: [id])
-  companyId               String?
+  Company                 Company?         @relation(fields: [company_id], references: [id])
+  company_id              String?
   title                   String
   description             String
   special_instruction     String?
@@ -75,8 +75,8 @@ model QuizAttempts {
   id             String    @id @unique() @default(uuid())
   Quiz           Quiz      @relation(fields: [quizId], references: [id])
   quizId         String
-  Member         Member    @relation(fields: [memberId], references: [id])
-  memberId       String
+  Member         Member    @relation(fields: [member_id], references: [id])
+  member_id      String
   finger_print   String
   ip_address     String
   started_at     DateTime  @default(now())
@@ -85,20 +85,40 @@ model QuizAttempts {
 }
 
 model QuizSection {
-  id                           String  @id @unique() @default(uuid())
-  Quiz                         Quiz    @relation(fields: [quizId], references: [id])
+  id                           String         @id @unique() @default(uuid())
+  Quiz                         Quiz           @relation(fields: [quizId], references: [id])
   quizId                       String
   title                        String
   description                  String?
+  questions                    QuizQuestion[]
   section_scores               Int
   section_assigned_total_score Int
+}
+
+model QuizQuestion {
+  id              String             @id @unique() @default(uuid())
+  QuizSection     QuizSection        @relation(fields: [quiz_section_id], references: [id])
+  quiz_section_id String
+  question        String
+  type            quiz_question_type
+  correct_answer  String?
+  options         QuizOption[]
+  created_at      DateTime           @default(now())
+}
+
+model QuizOption {
+  id               String       @id @unique @default(uuid())
+  Quiz_question    QuizQuestion @relation(fields: [quiz_question_id], references: [id])
+  quiz_question_id String
+  option           String
+  option_content   String
 }
 
 model AuthOtp {
   id         String  @id @unique() @default(uuid())
   otp_code   String
-  Company    Company @relation(fields: [CompanyId], references: [id])
-  CompanyId  String
+  Company    Company @relation(fields: [Company_id], references: [id])
+  Company_id String
   expired_at String
   created_at String
 }
@@ -107,6 +127,11 @@ enum quiz_access_type {
   Opened
   Password
   Restricted
+}
+
+enum quiz_question_type {
+  Text
+  Select
 }
 
 enum quiz_type {
