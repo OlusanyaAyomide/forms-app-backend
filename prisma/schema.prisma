@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                String          @id @unique @default(uuid())
+  email             String
+  password          String
+  last_logged_in_at DateTime?
+  finger_print      String?
+  otp               AuthOtp[]
+  first_name        String?
+  last_name         String?
+  theme             String?
+  created_at        DateTime        @default(now())
+  member_students   CompanyMember[]
+  quizzes           Quiz[]
+}
+
+model Member {
+  id           String          @id @unique @default(uuid())
+  email        String
+  finger_print String
+  companies    CompanyMember[]
+  attempts     QuizAttempts[]
+}
+
+model CompanyMember {
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId String
+  joined_at DateTime @default(now())
+  member    Member   @relation(fields: [memberId], references: [id])
+  memberId  String
+
+  @@id([companyId, memberId])
+}
+
+model Quiz {
+  id                      String           @id @unique @default(uuid())
+  Company                 Company?         @relation(fields: [companyId], references: [id])
+  companyId               String?
+  title                   String
+  description             String
+  special_instruction     String?
+  quiz_theme              String?
+  quiz_logo               String?
+  access_type             quiz_access_type
+  allow_multiple_attempts Boolean?
+  auto_submit_on_time_out Boolean?
+  quiz_type               quiz_type
+  duration                Int?
+  show_question_number    Boolean          @default(false)
+  show_total_question     Boolean          @default(false)
+  form_password           String?
+  attempts                QuizAttempts[]
+  start_button_text       String?
+  sections                QuizSection[]
+  opened_at               DateTime         @default(now())
+  closed_at               DateTime?
+  updated_at              DateTime         @updatedAt
+}
+
+model QuizAttempts {
+  id             String    @id @unique() @default(uuid())
+  Quiz           Quiz      @relation(fields: [quizId], references: [id])
+  quizId         String
+  Member         Member    @relation(fields: [memberId], references: [id])
+  memberId       String
+  finger_print   String
+  ip_address     String
+  started_at     DateTime  @default(now())
+  submitted_at   DateTime?
+  auto_submitted Boolean?
+}
+
+model QuizSection {
+  id                           String  @id @unique() @default(uuid())
+  Quiz                         Quiz    @relation(fields: [quizId], references: [id])
+  quizId                       String
+  title                        String
+  description                  String?
+  section_scores               Int
+  section_assigned_total_score Int
+}
+
+model AuthOtp {
+  id         String  @id @unique() @default(uuid())
+  otp_code   String
+  Company    Company @relation(fields: [CompanyId], references: [id])
+  CompanyId  String
+  expired_at String
+  created_at String
+}
+
+enum quiz_access_type {
+  Opened
+  Password
+  Restricted
+}
+
+enum quiz_type {
+  Quiz
+  Form
+}
