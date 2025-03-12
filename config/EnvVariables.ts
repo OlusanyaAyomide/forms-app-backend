@@ -3,5 +3,7 @@ export type EnvVariable = {
   database: {
     url: string
     port: number
-  }
+  },
+  auth_secret: string
+  expiry: string
 }

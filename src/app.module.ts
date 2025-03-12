@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import configuration from 'config/configuration';
 import { PrismaService } from './global/prisma.service';
-import { CompanyModule } from './company/company.module';
+import { CompanyModule } from './auth/auth.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
