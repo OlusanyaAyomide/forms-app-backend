@@ -1,6 +1,7 @@
-import { Body, ConflictException, Controller, Get, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Post, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateOrLogInCompanyDto } from './auth.dto';
+import { Public } from 'src/global/services/decorator.service';
 
 
 @Controller("company")
@@ -10,7 +11,8 @@ export class AuthController {
   ) { }
 
   @Get()
-  getCompanies() {
+  getCompanies(@Request() req) {
+
     return this.CompanyService.getAllCompanies({})
   }
 
@@ -26,6 +28,7 @@ export class AuthController {
     return this.CompanyService.createCompany(createUserDto)
   }
 
+  @Public()
   @Post("login")
   loginCompany(@Body() loginUserDto: CreateOrLogInCompanyDto) {
     return this.CompanyService.signIn(loginUserDto.email, loginUserDto.password)
