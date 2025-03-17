@@ -11,8 +11,7 @@ export class AuthController {
   ) { }
 
   @Get()
-  getCompanies(@Request() req) {
-
+  getCompanies() {
     return this.CompanyService.getAllCompanies({})
   }
 
