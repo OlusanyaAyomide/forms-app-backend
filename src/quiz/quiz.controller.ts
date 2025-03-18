@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Param, Post, Req } from "@nestjs/common"
 import { CreateQuizDto } from "./quiz.dto";
 import { CompanyMetaData, CustomRequest } from "src/auth/auth.types";
-import { PrismaService } from "src/global/prisma.service";
 import { QuizService } from "./quiz.services";
 import { Company } from "src/global/services/decorator.service";
 
