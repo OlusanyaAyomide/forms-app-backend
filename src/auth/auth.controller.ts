@@ -15,6 +15,7 @@ export class AuthController {
     return this.CompanyService.getAllCompanies({})
   }
 
+  @Public()
   @Post()
   async createCompanies(@Body() createUserDto: CreateOrLogInCompanyDto) {
 

@@ -1,14 +1,39 @@
-import { Body, Controller, Get, Post } from "@nestjs/common"
+import { Body, Controller, Get, Param, Post, Req } from "@nestjs/common"
+import { CreateQuizDto } from "./quiz.dto";
+import { CompanyMetaData, CustomRequest } from "src/auth/auth.types";
+import { PrismaService } from "src/global/prisma.service";
+import { QuizService } from "./quiz.services";
+import { Company } from "src/global/services/decorator.service";
+
 
 @Controller("quiz")
-export class CompanyController {
+export class QuizController {
   constructor(
-    // private readonly CompanyService: CompanyService,
+    private readonly quizService: QuizService,
   ) { }
 
-  @Get()
-  getCompanies() {
-    // return this.CompanyService.getAllCompanies({})
+  @Post()
+  async CreateQuizDto(
+    @Body() createQuizDto: CreateQuizDto,
+    @Company() company: CompanyMetaData
+  ) {
+    const defaultQuiz = await this.quizService.create({
+      ...createQuizDto, Company: {
+        connect: { id: company.id }
+      }
+    })
+
+    return defaultQuiz
+  }
+
+  @Get(':id')
+  async getQuiz(@Param('id') id: string) {
+    const singleQuiz = await this.quizService.getOne({ id }, {
+      include: {
+        attempts: true,
+      }
+    })
+    return singleQuiz
   }
 
 

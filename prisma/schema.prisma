@@ -49,11 +49,11 @@ model Quiz {
   special_instruction     String?
   quiz_theme              String?
   quiz_logo               String?
-  access_type             quiz_access_type
-  status                  quiz_type
+  access_type             quiz_access_type @default(Opened)
+  status                  quiz_status      @default(Draft)
   allow_multiple_attempts Boolean?
   auto_submit_on_time_out Boolean?
-  quiz_type               quiz_type
+  quiz_type               quiz_type?       @default(Quiz)
   duration                Int?
   show_question_number    Boolean          @default(false)
   show_total_question     Boolean          @default(false)
@@ -61,9 +61,10 @@ model Quiz {
   attempts                QuizAttempts[]
   start_button_text       String?
   sections                QuizSection[]
-  opened_at               DateTime         @default(now())
+  opened_at               DateTime?
   closed_at               DateTime?
   updated_at              DateTime         @updatedAt
+  created_at              DateTime         @default(now())
 }
 
 model QuizAttempts {

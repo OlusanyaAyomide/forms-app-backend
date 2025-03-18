@@ -8,13 +8,14 @@ import { CompanyModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
     load: [configuration]
   }),
-    CompanyModule,
+    CompanyModule, QuizModule
   ],
   controllers: [AppController],
   providers: [
