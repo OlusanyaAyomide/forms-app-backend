@@ -1,4 +1,7 @@
-import { IsBoolean, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Length, MaxLength } from 'class-validator';
+import {
+  IsBoolean, IsDate, IsEnum, IsInt, IsNotEmpty,
+  IsOptional, IsString, Length, MaxLength, IsUUID, Min
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { quiz_access_type, quiz_status } from '@prisma/client';
 
@@ -81,4 +84,28 @@ export class CreateQuizDto {
   @Type(() => Date)
   @IsDate()
   closed_at?: Date;
+}
+
+export class CreateQuizSectionDto {
+  @IsNotEmpty()
+  @IsUUID()
+  quiz_id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  section_scores?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  section_assigned_total_score?: number;
 }

@@ -1,55 +1,52 @@
-import { PrismaClient, Quiz, Prisma } from '@prisma/client';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Quiz, Prisma, QuizSection } from '@prisma/client';
+import { PrismaService } from 'src/global/prisma.service';
 
-const prisma = new PrismaClient();
-
-export type QuizWhereInput = Prisma.QuizWhereInput;
-export type QuizOrderByInput = Prisma.QuizOrderByWithRelationInput;
-export type QuizIncludeInput = Prisma.QuizInclude;
-export type QuizCreateInput = Prisma.QuizCreateInput;
-export type QuizUpdateInput = Prisma.QuizUpdateInput;
-export type QuizFindFirstArgs = Prisma.QuizFindFirstArgs
-
+@Injectable()
 export class QuizService {
+  constructor(
+    private prisma: PrismaService,
+  ) { }
 
-  async create(data: QuizCreateInput): Promise<Quiz> {
-    return prisma.quiz.create({
+  async create(data: Prisma.QuizCreateInput): Promise<Quiz> {
+    return this.prisma.quiz.create({
       data
     });
   }
 
-  async update(id: string, data: QuizUpdateInput): Promise<Quiz> {
-    return prisma.quiz.update({
+  async update(id: string, data: Prisma.QuizUpdateInput): Promise<Quiz> {
+    return this.prisma.quiz.update({
       where: { id },
       data
     });
   }
 
   async getOne(
-    filter: QuizWhereInput,
-    options?: QuizFindFirstArgs
+    filter: Prisma.QuizWhereInput,
+    options?: Prisma.QuizFindFirstArgs
   ): Promise<Quiz | null> {
-    return prisma.quiz.findFirst({
+    return this.prisma.quiz.findFirst({
       where: filter,
       ...options
     });
   }
 
   async getMany(
-    where?: QuizWhereInput,
+    where?: Prisma.QuizWhereInput,
     take?: number,
     skip?: number,
-    orderBy?: QuizOrderByInput | QuizOrderByInput[],
-    include?: QuizIncludeInput
+    orderBy?: Prisma.QuizOrderByWithRelationInput | Prisma.QuizOrderByWithRelationInput[],
+    include?: Prisma.QuizInclude
   ): Promise<{ quizzes: Quiz[]; total: number }> {
     const [quizzes, total] = await Promise.all([
-      prisma.quiz.findMany({
+      this.prisma.quiz.findMany({
         where,
         take,
         skip,
         orderBy,
         include
       }),
-      prisma.quiz.count({ where })
+      this.prisma.quiz.count({ where })
     ]);
 
     return {
@@ -59,10 +56,34 @@ export class QuizService {
   }
 
   async delete(id: string): Promise<Quiz> {
-    return prisma.quiz.delete({
+    return this.prisma.quiz.delete({
       where: { id }
     });
   }
-}
 
-export default new QuizService();
+  async createQuizSection(data: Prisma.QuizSectionCreateInput): Promise<QuizSection> {
+
+    const quizId = data.Quiz.connect?.id;
+
+    await this.prisma.utils.ensureQuizExists(quizId)
+
+    const quizExists = await this.prisma.quiz.findFirst({
+      where: { id: quizId },
+      select: { id: true }
+    });
+
+    if (!quizExists) {
+      throw new NotFoundException(`Quiz with ID ${quizId} not found`);
+    }
+    return this.prisma.quizSection.create({
+      data
+    });
+  }
+
+  async updateQuizSection(id: string, data: Prisma.QuizSectionUpdateInput): Promise<QuizSection> {
+    return this.prisma.quizSection.update({
+      where: { id },
+      data
+    });
+  }
+}

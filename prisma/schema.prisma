@@ -82,13 +82,13 @@ model QuizAttempts {
 
 model QuizSection {
   id                           String         @id @unique() @default(uuid())
-  Quiz                         Quiz           @relation(fields: [quizId], references: [id])
-  quizId                       String
+  Quiz                         Quiz           @relation(fields: [quiz_id], references: [id])
+  quiz_id                      String
   title                        String
   description                  String?
   questions                    QuizQuestion[]
-  section_scores               Int
-  section_assigned_total_score Int
+  section_scores               Int?
+  section_assigned_total_score Int?
 }
 
 model QuizQuestion {
