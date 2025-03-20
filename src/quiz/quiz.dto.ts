@@ -109,3 +109,10 @@ export class CreateQuizSectionDto {
   @Min(0)
   section_assigned_total_score?: number;
 }
+
+export class QuizGeneratorDto {
+  @IsNotEmpty()
+  @IsString()
+  @Length(50, 2000)
+  text: string;
+}

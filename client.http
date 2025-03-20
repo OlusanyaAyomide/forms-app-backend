@@ -1,0 +1,19 @@
+POST http://localhost:3000/company/login
+content-type: application/json
+
+{
+  "email":"ayomideflex72@gmail.com",
+  "password":"password"
+}
+
+###
+
+POST http://localhost:3000/quiz/generate
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkyZGY2M2M5LTdlZjEtNGY4OS1iZmUzLTc4NmU0MjEzYmZlMSIsImVtYWlsIjoiYXlvbWlkZWZsZXg3MkBnbWFpbC5jb20iLCJpYXQiOjE3NDI1MDkyMzYsImV4cCI6MTc0MzExNDAzNn0.EVA2bKrfYZlRndlCKEOdGRikx7Es9XYaS5F1bp-XvVE
+
+{
+  "text": "1) Which of the following decreases when a given mass of gas is compressed to half its initial volume?\nA. Average intermolecular distance.✓\nB. Frequency of collision.\nC. Number of molecules present.\nD. Atomic radius of each molecule.\nExplanation: Go to page 2 section 2 of the course material\n\n2) The volume of a given gas is Vcm^3 at Pmmhg. What is the new volume of the gas if the pressure is reduced to half at constant temperature?\nA) 2Vcm^3 (Correct Ans)\nB) V/2cm^3\nC) Vcm^3\nD) 4/Vcm^3.\nExplanation: Go to page 3 section 4 of the course material\n\n3) The relative rate of diffusion of gases, P and Q of densities 1.44g/dm^3 and 0.16g/dm^3 respectively is in the ratio?\nA) 1:3✓\nB) 1:4\nC) 3:1\nD) 4:1.\n\n4) A mixture of two gases P and Q occupying volume 300cm^3 and 100cm^3 respectively exerts a total pressure of 800mmHg. What's the partial pressure of Q?\nA) 600mmHg\nB) 300mmHg\nC) 200mmHg (Ans)\nD) 100mmHg.\n\n5) What is the biggest ocean in the world?\nAnswer: Pacific Ocean\nWhy: The Pacific Ocean is the largest in the world, covering a total surface area of 165,250,000."
+}
+
+

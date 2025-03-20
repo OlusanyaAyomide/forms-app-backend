@@ -1,14 +1,17 @@
 import { Body, Controller, Get, Param, Post, Req } from "@nestjs/common"
-import { CreateQuizDto, CreateQuizSectionDto } from "./quiz.dto";
-import { CompanyMetaData, CustomRequest } from "src/auth/auth.types";
+import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto } from "./quiz.dto";
+import { CompanyMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";
 import { Company } from "src/global/services/decorator.service";
+import { GeminiService } from "src/googleAi/gemini.service";
+import { cleanAndParseJson } from "src/global/services/text.sercice";
 
 
 @Controller("quiz")
 export class QuizController {
   constructor(
     private readonly quizService: QuizService,
+    private readonly geminiService: GeminiService
   ) { }
 
   @Post()
@@ -46,7 +49,18 @@ export class QuizController {
         connect: { id: quiz_id }
       }
     })
-
     return section
   }
+
+  @Post("generate")
+  async generateQuiz(
+    @Body() { text }: QuizGeneratorDto
+  ) {
+    const data = await this.geminiService.generateQuizStructure(text)
+    const responseText = data.response.text()
+
+    console.log(responseText)
+    return { data: cleanAndParseJson(responseText) }
+  }
+
 }
