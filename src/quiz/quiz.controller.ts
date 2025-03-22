@@ -4,13 +4,16 @@ import { CompanyMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";
 import { Company } from "src/global/services/decorator.service";
 import { GeminiService } from "src/googleAi/gemini.service";
-import { cleanAndParseJson } from "src/global/services/text.sercice";
+import { cleanAndParseJson } from "src/global/services/text.service";
+import { QuizQuestionService } from "./quiz-question.services";
+import { CreateQuizQuestionDto, QuizSectionDto } from "./quiz-question.dto";
 
 
 @Controller("quiz")
 export class QuizController {
   constructor(
     private readonly quizService: QuizService,
+    private readonly quizSectionService: QuizQuestionService,
     private readonly geminiService: GeminiService
   ) { }
 
@@ -58,9 +61,12 @@ export class QuizController {
   ) {
     const data = await this.geminiService.generateQuizStructure(text)
     const responseText = data.response.text()
-
-    console.log(responseText)
     return { data: cleanAndParseJson(responseText) }
   }
 
+  @Post("create")
+  async createQuiz(@Body() quizDataDto: CreateQuizQuestionDto) {
+    console.log(quizDataDto)
+    return { received: "true" }
+  }
 }

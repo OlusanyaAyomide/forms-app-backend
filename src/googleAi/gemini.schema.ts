@@ -32,8 +32,12 @@ export const quizGeneratorSchema: Schema = {
         nullable: true
       },
       correct_answer: {
-        type: SchemaType.STRING,
-        description: "The correct answer, or null if no answer is marked, should be capitalized",
+        type: SchemaType.ARRAY,
+        description: "An Array of marked answers,it should multiple strings if there are more than one answer,should be capitalized, or null, if no answer is present",
+        items: {
+          type: SchemaType.STRING,
+          description: "An item of the correct answer",
+        },
         nullable: true
       },
       question_type: {
