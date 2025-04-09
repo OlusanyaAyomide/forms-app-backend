@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req } from "@nestjs/common"
+import { Body, Controller, Get, Param, Post, Put, Req } from "@nestjs/common"
 import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto } from "./quiz.dto";
 import { CompanyMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";
@@ -64,9 +64,26 @@ export class QuizController {
     return { data: cleanAndParseJson(responseText) }
   }
 
-  @Post("create")
-  async createQuiz(@Body() quizDataDto: CreateQuizQuestionDto) {
-    console.log(quizDataDto)
+  @Post(":quiz_id/create")
+  async createQuiz(
+    @Body() quizDataDto: CreateQuizQuestionDto,
+    @Param('quiz_id') quizId: string
+  ) {
+    console.log(quizId)
     return { received: "true" }
   }
+
+  @Put(":id")
+  async updateQuiz(
+    @Body() createQuizDto: CreateQuizDto,
+    @Param('id') id: string
+  ) {
+
+    const updatedQuiz = await this.quizService.update(
+      id, createQuizDto
+    )
+
+    return updatedQuiz
+  }
+
 }

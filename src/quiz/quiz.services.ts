@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Quiz, Prisma, QuizSection } from '@prisma/client';
 import { PrismaService } from 'src/global/prisma.service';
+import { handlePrismaError } from 'src/global/services/prisma.error.service';
+
 
 @Injectable()
 export class QuizService {
@@ -15,10 +17,16 @@ export class QuizService {
   }
 
   async update(id: string, data: Prisma.QuizUpdateInput): Promise<Quiz> {
-    return this.prisma.quiz.update({
-      where: { id },
-      data
-    });
+    try {
+      return await this.prisma.quiz.update({
+        where: { id },
+        data
+      });
+    } catch (err) {
+      handlePrismaError(err)
+      throw err
+    }
+
   }
 
   async getOne(
@@ -81,9 +89,15 @@ export class QuizService {
   }
 
   async updateQuizSection(id: string, data: Prisma.QuizSectionUpdateInput): Promise<QuizSection> {
-    return this.prisma.quizSection.update({
-      where: { id },
-      data
-    });
+    try {
+      return this.prisma.quizSection.update({
+        where: { id },
+        data
+      });
+    }
+    catch (err) {
+      handlePrismaError(err)
+      throw err
+    }
   }
 }

@@ -43,14 +43,7 @@ export class QuizSectionDto {
 
   @IsString()
   @IsUUID()
-  quiz_id: string;
-
-  @IsString()
-  title: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
+  section_id: string;
 
   @IsArray()
   @ValidateNested({ each: true })

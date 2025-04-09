@@ -8,6 +8,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   constructor() {
     super({
+
       omit: {
         company: {
           password: true,
@@ -21,5 +22,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async onModuleInit() {
     await this.$connect();
+
   }
+
+
 }
