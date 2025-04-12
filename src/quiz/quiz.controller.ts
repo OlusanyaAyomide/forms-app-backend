@@ -6,7 +6,7 @@ import { Company } from "src/global/services/decorator.service";
 import { GeminiService } from "src/googleAi/gemini.service";
 import { cleanAndParseJson } from "src/global/services/text.service";
 import { QuizQuestionService } from "./quiz-question.services";
-import { CreateQuizQuestionDto, QuizSectionDto } from "./quiz-question.dto";
+import { CreateUpdateQuizQuestionDto, QuizSectionDto } from "./quiz-question.dto";
 
 
 @Controller("quiz")
@@ -35,7 +35,15 @@ export class QuizController {
   async getQuiz(@Param('id') id: string) {
     const singleQuiz = await this.quizService.getOne({ id }, {
       include: {
-        sections: true,
+        sections: {
+          include: {
+            questions: {
+              include: {
+                options: true
+              }
+            }
+          }
+        },
         attempts: true,
       }
     })
@@ -65,12 +73,12 @@ export class QuizController {
   }
 
   @Post(":quiz_id/create")
-  async createQuiz(
-    @Body() quizDataDto: CreateQuizQuestionDto,
+  async createUpdateQuiz(
+    @Body() quizDataDto: CreateUpdateQuizQuestionDto,
     @Param('quiz_id') quizId: string
   ) {
-    console.log(quizId)
-    return { received: "true" }
+    const generatedQuiz = await this.quizSectionService.createUpdateQuizQuestion(quizDataDto, quizId)
+    return generatedQuiz
   }
 
   @Put(":id")

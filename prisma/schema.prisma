@@ -102,6 +102,7 @@ model QuizQuestion {
   image_url       String?
   options         QuizOption[]
   created_at      DateTime           @default(now())
+  question_order  Int
 }
 
 model QuizOption {

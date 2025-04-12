@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsOptional, IsString, ValidateNested, ArrayMinSize, IsNotEmpty, IsUUID, IsInt } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString, ValidateNested, ArrayMinSize, IsNotEmpty, IsUUID, IsInt, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class QuestionOption {
@@ -9,6 +9,12 @@ class QuestionOption {
   @IsNotEmpty()
   @IsString()
   option_content: string;
+
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  option_id?: string
 }
 
 export class QuestionDto {
@@ -16,8 +22,8 @@ export class QuestionDto {
   @IsString()
   question: string;
 
-  @IsEnum(["Select", "TextArea"], { message: 'question_type must be either "Select" or "TextArea"' })
-  question_type: "Select" | "TextArea";
+  @IsEnum(["Select", "Text"], { message: 'question_type must be either "Select" or "TextArea"' })
+  question_type: "Select" | "Text";
 
   @IsArray()
   // @ArrayMinSize(1, { message: 'correct_answer must have at least one item' })
@@ -30,7 +36,16 @@ export class QuestionDto {
 
   @IsOptional()
   @IsString()
+  @IsUUID()
+  question_id?: string
+
+  @IsOptional()
+  @IsString()
   image_url?: string
+
+  @IsNumber()
+  @IsOptional()
+  question_order?: number
 
   @IsOptional()
   @ValidateNested({ each: true })
@@ -59,7 +74,7 @@ export class QuizSectionDto {
   section_assigned_total_score?: number;
 }
 
-export class CreateQuizQuestionDto {
+export class CreateUpdateQuizQuestionDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => QuizSectionDto)
