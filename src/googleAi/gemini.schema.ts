@@ -2,7 +2,7 @@ import { Schema, SchemaType } from "@google/generative-ai";
 
 export const quizGeneratorSchema: Schema = {
   type: SchemaType.ARRAY,
-  description: "List of structured questions and answers",
+  description: "Array of structured questions and answers",
   items: {
     type: SchemaType.OBJECT,
     properties: {
@@ -13,7 +13,7 @@ export const quizGeneratorSchema: Schema = {
       },
       options: {
         type: SchemaType.ARRAY,
-        description: "List of answer choices (capitalized)",
+        description: "Array of answer choices (capitalized)",
         items: {
           type: SchemaType.OBJECT,
           properties: {
@@ -43,7 +43,7 @@ export const quizGeneratorSchema: Schema = {
       question_type: {
         type: SchemaType.STRING,
         format: "enum",
-        enum: ["TextArea", "Select"],
+        enum: ["Text", "Select"],
         description: "The type of question: 'TextArea' if no options, 'Select' if options are present"
       },
       explanation: {
@@ -55,3 +55,39 @@ export const quizGeneratorSchema: Schema = {
     required: ["question", "question_type"]
   }
 };
+
+export const quizOptionSchema: Schema = {
+  type: SchemaType.ARRAY,
+  description: "Array of options A to D",
+  items: {
+    type: SchemaType.OBJECT,
+    properties: {
+      option: {
+        type: SchemaType.STRING,
+        format: "enum",
+        enum: ["A", "B", "C", "D"],
+        description: "An alphabet representing the option",
+        nullable: false
+      },
+      option_content: {
+        type: SchemaType.STRING,
+        description: "The content of the option",
+        nullable: false
+      }
+    }
+  }
+}
+
+
+export const quizExplanationSchema: Schema = {
+  type: SchemaType.OBJECT,
+  description: "An object containing the explanation to the question",
+  properties: {
+    explanation: {
+      type: SchemaType.STRING,
+      description: "The Explanation to the question",
+      nullable: false
+    },
+  }
+
+}

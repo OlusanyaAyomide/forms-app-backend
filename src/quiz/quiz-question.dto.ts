@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsOptional, IsString, ValidateNested, ArrayMinSize, IsNotEmpty, IsUUID, IsInt, IsNumber } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString, ValidateNested, ArrayMinSize, IsNotEmpty, IsUUID, IsInt, IsNumber, min, Length } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class QuestionOption {
@@ -33,6 +33,10 @@ export class QuestionDto {
   @IsOptional()
   @IsString()
   explanation?: string;
+
+  @IsOptional()
+  @IsString()
+  explanation_url?: string;
 
   @IsOptional()
   @IsString()
@@ -79,4 +83,10 @@ export class CreateUpdateQuizQuestionDto {
   @ValidateNested({ each: true })
   @Type(() => QuizSectionDto)
   sections: QuizSectionDto[]
+}
+
+export class QuestionOptionGenerateDto {
+  @IsString()
+  @Length(7)
+  question: string
 }

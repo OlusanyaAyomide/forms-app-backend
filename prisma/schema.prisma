@@ -99,6 +99,7 @@ model QuizQuestion {
   type            quiz_question_type
   correct_answer  String[]           @default([])
   explanation     String?
+  explanation_url String?
   image_url       String?
   options         QuizOption[]
   created_at      DateTime           @default(now())

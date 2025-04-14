@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req } from "@nestjs/common"
+import { Body, Controller, Get, NotFoundException, Param, Post, Put, Req } from "@nestjs/common"
 import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto } from "./quiz.dto";
 import { CompanyMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";
@@ -6,7 +6,7 @@ import { Company } from "src/global/services/decorator.service";
 import { GeminiService } from "src/googleAi/gemini.service";
 import { cleanAndParseJson } from "src/global/services/text.service";
 import { QuizQuestionService } from "./quiz-question.services";
-import { CreateUpdateQuizQuestionDto, QuizSectionDto } from "./quiz-question.dto";
+import { CreateUpdateQuizQuestionDto, QuestionOptionGenerateDto } from "./quiz-question.dto";
 
 
 @Controller("quiz")
@@ -92,6 +92,32 @@ export class QuizController {
     )
 
     return updatedQuiz
+  }
+
+  @Post("options/generate")
+  async generateQuestionOptions(
+    @Body() generateOptionDto: QuestionOptionGenerateDto,
+  ) {
+    const data = await this.geminiService.generateQuestionOptions(generateOptionDto.question)
+    const responseText = data.response.text()
+    return { data: cleanAndParseJson(responseText) }
+  }
+
+  @Post("question/:question_id/explanation/generate")
+  async generateQuestionExplanation(
+    @Param('question_id') questionId: string
+  ) {
+    const question = await this.quizSectionService.getOneQuestion({
+      id: questionId
+    })
+    if (!question) {
+      throw new NotFoundException('Question not found');
+    }
+    const stringifiedQuestion = JSON.stringify(question)
+
+    const data = await this.geminiService.generateQuestionExplanation(stringifiedQuestion)
+    const responseText = data.response.text()
+    return { data: cleanAndParseJson(responseText) }
   }
 
 }

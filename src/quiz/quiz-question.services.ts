@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Quiz, Prisma, QuizSection } from '@prisma/client';
+import { Quiz, Prisma, QuizSection, QuizQuestion } from '@prisma/client';
 import { PrismaService } from 'src/global/prisma.service';
 import { CreateUpdateQuizQuestionDto } from './quiz-question.dto';
 import { handlePrismaError } from 'src/global/services/prisma.error.service';
@@ -43,6 +43,8 @@ export class QuizQuestionService {
                           question: question.question,
                           type: question.question_type,
                           correct_answer: question.correct_answer,
+                          image_url: question.image_url,
+                          explanation_url: question.explanation_url,
                           explanation: question.explanation,
                           question_order: question.question_order,
                           options: {
@@ -79,6 +81,8 @@ export class QuizQuestionService {
                           question: question.question,
                           type: question.question_type,
                           correct_answer: question.correct_answer,
+                          image_url: question.image_url,
+                          explanation_url: question.explanation_url,
                           explanation: question.explanation,
                           question_order: index,
                           options: {
@@ -99,6 +103,8 @@ export class QuizQuestionService {
                         type: question.question_type,
                         correct_answer: question.correct_answer,
                         explanation: question.explanation,
+                        image_url: question.image_url,
+                        explanation_url: question.explanation_url,
                         question_order: question.question_order || index,
                         options: {
                           create: question.options?.map((option) => ({
@@ -113,11 +119,33 @@ export class QuizQuestionService {
             })),
           },
         },
+        include: {
+          sections: {
+            include: {
+              questions: {
+                include: {
+                  options: true
+                }
+              }
+            }
+          },
+          attempts: true,
+        }
       });
       return generatedQuiz;
     } catch (err) {
       console.log(err)
       handlePrismaError(err);
     }
+  }
+
+  async getOneQuestion(
+    filter: Prisma.QuizQuestionWhereInput,
+    options?: Prisma.QuizQuestionFindFirstArgs
+  ): Promise<QuizQuestion | null> {
+    return this.prisma.quizQuestion.findFirst({
+      where: filter,
+      ...options
+    });
   }
 }
