@@ -1,5 +1,5 @@
 import { Body, Controller, Get, NotFoundException, Param, Post, Put, Req } from "@nestjs/common"
-import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto } from "./quiz.dto";
+import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto, UpdateQuizDto } from "./quiz.dto";
 import { CompanyMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";
 import { Company } from "src/global/services/decorator.service";
@@ -83,12 +83,12 @@ export class QuizController {
 
   @Put(":id")
   async updateQuiz(
-    @Body() createQuizDto: CreateQuizDto,
+    @Body() updateQuizDto: UpdateQuizDto,
     @Param('id') id: string
   ) {
 
     const updatedQuiz = await this.quizService.update(
-      id, createQuizDto
+      id, updateQuizDto
     )
 
     return updatedQuiz
