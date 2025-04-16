@@ -1,3 +1,5 @@
+import { quiz_status } from "@prisma/client";
+
 type QuestionOption = {
   option: string;
   option_content: string;
@@ -10,5 +12,11 @@ type Question = {
   explanation?: string;
   options?: QuestionOption[];
 };
+
+export type QuizSchedulePayload = {
+  status: quiz_status
+  quiz_id: string
+  scheduled_at: string
+}
 
 export type QuizQuestion = Question[];

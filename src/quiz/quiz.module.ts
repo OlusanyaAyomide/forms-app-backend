@@ -5,10 +5,18 @@ import { QuizService } from './quiz.services';
 import { GeminiService } from 'src/googleAi/gemini.service';
 import { GoogleAIProvider } from 'src/googleAi/google-ai.provider';
 import { QuizQuestionService } from './quiz-question.services';
+import { ScheduleService } from 'src/global/services/scheduler.service';
 
 @Module({
   controllers: [QuizController],
-  providers: [QuizService, PrismaService, QuizQuestionService, GeminiService, GoogleAIProvider],
+  providers: [
+    QuizService,
+    PrismaService,
+    QuizQuestionService,
+    GeminiService,
+    ScheduleService,
+    GoogleAIProvider
+  ],
   exports: [QuizService]
 })
 

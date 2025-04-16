@@ -1,12 +1,16 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Put, Req } from "@nestjs/common"
-import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto, UpdateQuizDto } from "./quiz.dto";
+import { Body, Controller, Get, NotFoundException, Param, Post, Put, Req, UnprocessableEntityException } from "@nestjs/common"
+import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto, QuizStatusPayloadDto, QuizStatusSchedulerDto, UpdateQuizDto } from "./quiz.dto";
 import { CompanyMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";
-import { Company } from "src/global/services/decorator.service";
+import { Company, Public } from "src/global/services/decorator.service";
 import { GeminiService } from "src/googleAi/gemini.service";
 import { cleanAndParseJson } from "src/global/services/text.service";
 import { QuizQuestionService } from "./quiz-question.services";
 import { CreateUpdateQuizQuestionDto, QuestionOptionGenerateDto } from "./quiz-question.dto";
+import { ScheduleService } from "src/global/services/scheduler.service";
+import { QuizSchedulePayload } from "./quiz.types";
+import { areDatesEqual } from "src/global/services/date.service";
+import { Prisma, Quiz } from "@prisma/client";
 
 
 @Controller("quiz")
@@ -14,7 +18,8 @@ export class QuizController {
   constructor(
     private readonly quizService: QuizService,
     private readonly quizSectionService: QuizQuestionService,
-    private readonly geminiService: GeminiService
+    private readonly geminiService: GeminiService,
+    private readonly scheduleService: ScheduleService,
   ) { }
 
   @Post()
@@ -87,8 +92,22 @@ export class QuizController {
     @Param('id') id: string
   ) {
 
+    const currentDate = new Date()
+
+    let extraFilter: Prisma.QuizUpdateInput = {}
+
+    if (updateQuizDto.status) {
+      if (updateQuizDto.status === "Opened") {
+        extraFilter["opened_at"] = currentDate
+        extraFilter["closed_at"] = null
+      } else if (updateQuizDto.status === "Closed") {
+        extraFilter["closed_at"] = currentDate
+        extraFilter["opened_at"] = null
+      }
+    }
+
     const updatedQuiz = await this.quizService.update(
-      id, updateQuizDto
+      id, { ...updateQuizDto, ...extraFilter }
     )
 
     return updatedQuiz
@@ -118,6 +137,74 @@ export class QuizController {
     const data = await this.geminiService.generateQuestionExplanation(stringifiedQuestion)
     const responseText = data.response.text()
     return { data: cleanAndParseJson(responseText) }
+  }
+
+  @Post("status/:quiz_id/schedule")
+  async scheduleQuizStatus(
+    @Body() schedulePayload: QuizStatusSchedulerDto,
+    @Param('quiz_id') quizId: string
+  ) {
+
+    const quizStatus = schedulePayload.status
+
+    const quiz = await this.quizService.getOne({ id: quizId })
+
+    if (!quiz) {
+      throw new NotFoundException("Quiz ID is invalid")
+    }
+
+    if (quiz.status === quizStatus) {
+      throw new UnprocessableEntityException(`Quiz already ${quizStatus}`)
+    }
+
+    await this.quizService.update(quizId, {
+      opened_at: quizStatus === "Opened" ? schedulePayload.scheduled_at : undefined,
+      closed_at: quizStatus === "Closed" ? schedulePayload.scheduled_at : undefined
+    })
+
+    const response = await this.scheduleService.Scheduler<QuizSchedulePayload>({
+      endpoint: `quiz/status/${quizId}/resolve`,
+      scheduled_at: schedulePayload.scheduled_at,
+      payload: {
+        status: quizStatus,
+        quiz_id: quizId,
+        scheduled_at: schedulePayload.scheduled_at.toISOString()
+      }
+    })
+
+    if (!response) {
+      throw new UnprocessableEntityException("Unable to schedule status")
+    }
+    return response
+  }
+
+  //internal
+  @Public()
+  @Post("status/:quiz_id/resolve")
+  async UpdateScheduleQuizStatus(
+    @Body() responsePayload: QuizStatusPayloadDto,
+    @Param('quiz_id') quizId: string
+  ) {
+
+    const quiz = await this.quizService.getOne({ id: quizId })
+
+    if (!quiz) {
+      return null
+    }
+
+    const quizDate = responsePayload.status === "Opened" ? quiz.opened_at : quiz.closed_at
+
+    const isScheduledStillValid = areDatesEqual(responsePayload.scheduled_at, quizDate)
+
+    console.log(isScheduledStillValid, responsePayload.scheduled_at, quizDate)
+    if (!isScheduledStillValid) {
+      return null
+    }
+
+    await this.quizService.update(quizId, {
+      status: responsePayload.status
+    })
+    return { message: "Updated Success" }
   }
 
 }

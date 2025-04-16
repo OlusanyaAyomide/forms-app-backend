@@ -7,4 +7,5 @@ export type EnvVariable = {
   auth_secret: string
   expiry: string
   GEMINI_API_KEY: string
+  LIVE_URL: string
 }
