@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 import { Request } from 'express';
-import { EnvVariable } from 'config/EnvVariables';
+import { EnvVariable } from 'src/config/EnvVariables';
 import { IS_PUBLIC_KEY } from 'src/global/services/decorator.service';
 
 

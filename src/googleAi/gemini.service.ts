@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GenerateContentResult, GoogleGenerativeAI } from '@google/generative-ai';
-import { EnvVariable } from 'config/EnvVariables';
+import { EnvVariable } from 'src/config/EnvVariables';
 import { quizExplanationSchema, quizGeneratorSchema, quizOptionSchema } from 'src/googleAi/gemini.schema';
 import { modelName, quizExplanationPrompt, quizGeneratorPrompt, quizOptionPrompt } from 'src/googleAi/gemini.static';
 

@@ -10,7 +10,7 @@ import { CreateUpdateQuizQuestionDto, QuestionOptionGenerateDto } from "./quiz-q
 import { ScheduleService } from "src/global/services/scheduler.service";
 import { QuizSchedulePayload } from "./quiz.types";
 import { areDatesEqual } from "src/global/services/date.service";
-import { Prisma, Quiz } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 
 @Controller("quiz")
@@ -196,7 +196,6 @@ export class QuizController {
 
     const isScheduledStillValid = areDatesEqual(responsePayload.scheduled_at, quizDate)
 
-    console.log(isScheduledStillValid, responsePayload.scheduled_at, quizDate)
     if (!isScheduledStillValid) {
       return null
     }

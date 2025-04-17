@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigService } from '@nestjs/config';
-import { EnvVariable } from 'config/EnvVariables';
+import { EnvVariable } from 'src/config/EnvVariables';
 
 @Controller()
 export class AppController {

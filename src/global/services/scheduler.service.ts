@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { EnvVariable } from 'config/EnvVariables';
+import { EnvVariable } from 'src/config/EnvVariables';
 import { QuizScheduleResponse, ScheduledPayload } from 'src/quiz/services.types';
 
 
