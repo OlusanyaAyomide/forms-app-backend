@@ -32,11 +32,15 @@ export class QuizService {
   async getOne(
     filter: Prisma.QuizWhereInput,
     options?: Prisma.QuizFindFirstArgs
-  ): Promise<Quiz | null> {
-    return this.prisma.quiz.findFirst({
+  ): Promise<Quiz> {
+    const quiz = await this.prisma.quiz.findFirst({
       where: filter,
       ...options
     });
+    if (!quiz) {
+      throw new NotFoundException("Quiz ID is invalid")
+    }
+    return quiz
   }
 
   async getMany(

@@ -37,7 +37,9 @@ export class QuizController {
   }
 
   @Get(':id')
-  async getQuiz(@Param('id') id: string) {
+  async getQuiz(
+    @Param('id') id: string
+  ) {
     const singleQuiz = await this.quizService.getOne({ id }, {
       include: {
         sections: {

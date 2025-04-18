@@ -181,7 +181,7 @@ export class CreateQuizSectionDto {
 export class QuizGeneratorDto {
   @IsNotEmpty()
   @IsString()
-  @Length(50, 2000)
+  @Length(50, 10000)
   text: string;
 }
 
