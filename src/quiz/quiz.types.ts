@@ -19,4 +19,10 @@ export type QuizSchedulePayload = {
   scheduled_at: string
 }
 
+export type CheckEligibilityArgs = {
+  ipAddress: string,
+  fingerPrint: string,
+  quizId: string
+}
+
 export type QuizQuestion = Question[];

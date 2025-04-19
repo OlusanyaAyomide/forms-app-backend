@@ -98,18 +98,17 @@ model QuizQuestion {
 
 model QuizAttempts {
   id              String                 @id() @default(uuid())
-  Quiz            Quiz                   @relation(fields: [quizId], references: [id])
-  quizId          String
+  Quiz            Quiz                   @relation(fields: [quiz_id], references: [id])
+  quiz_id         String
   Member          Member                 @relation(fields: [member_id], references: [id])
   member_id       String
   started_at      DateTime               @default(now())
   submitted_at    DateTime?
-  auto_submitted  Boolean?
+  auto_submitted  Boolean?               @default(false)
   ip_address      String
   finger_print    String
-  status          attempt_status
+  status          attempt_status?        @default(Draft)
   attempt_answers QuizQuestionAttempts[]
-  memberDeviceId  String
 }
 
 model QuizQuestionAttempts {

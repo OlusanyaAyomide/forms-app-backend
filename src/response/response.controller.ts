@@ -38,7 +38,7 @@ export class ResponseController {
 
     const { allow_multiple_attempts, ...quizData } = quizInfo
 
-    const canTakeQuiz = allow_multiple_attempts ? true : await this.responseService.isEligibleToTakeQuiz(
+    const canTakeQuiz = await this.responseService.isEligibleToTakeQuiz(
       { ipAddress: userIp, fingerPrint, quizId: quizId })
 
     return {
