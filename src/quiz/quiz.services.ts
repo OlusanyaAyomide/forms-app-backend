@@ -43,6 +43,25 @@ export class QuizService {
     return quiz
   }
 
+  async getQuizFromAttempt(
+    filter: Prisma.QuizAttemptsWhereInput,
+    options?: Prisma.QuizFindFirstArgs): Promise<Quiz> {
+    const attempt = await this.prisma.quizAttempts.findFirst({
+      where: filter,
+      include: {
+        Quiz: {
+          select: { id: true }
+        }
+      }
+    })
+
+    if (!attempt) {
+      throw new NotFoundException("Attempt ID is invalid")
+    }
+
+    return this.getOne({ id: attempt.Quiz.id }, options)
+  }
+
   async getMany(
     where?: Prisma.QuizWhereInput,
     take?: number,

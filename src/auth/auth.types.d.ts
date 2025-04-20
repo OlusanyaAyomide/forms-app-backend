@@ -1,12 +1,15 @@
 import { Request } from "express"
 
-export type CompanyMetaData = {
+export type PayloadMetaData = {
   id: string
   email: string
-  iat: number,
-  exp: number
+  iat?: number,
+  type: "Company" | "Member"
+  exp?: number
 }
 
 export type CustomRequest = {
-  company: CompanyMetaData
+  company: PayloadMetaData
 } & Request
+
+

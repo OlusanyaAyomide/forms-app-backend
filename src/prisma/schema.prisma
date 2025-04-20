@@ -105,9 +105,11 @@ model QuizAttempts {
   started_at      DateTime               @default(now())
   submitted_at    DateTime?
   auto_submitted  Boolean?               @default(false)
+  time_spent      DateTime?
   ip_address      String
   finger_print    String
   status          attempt_status?        @default(Draft)
+  publish_status  quiz_publish_status    @default(UnPublished)
   attempt_answers QuizQuestionAttempts[]
 }
 
@@ -120,6 +122,8 @@ model QuizQuestionAttempts {
   answer         String
   updatedAt      DateTime      @updatedAt
   created_at     DateTime      @default(now())
+
+  @@unique([quizAttemptsId, quizQuestionId])
 }
 
 model QuizOption {
@@ -127,6 +131,7 @@ model QuizOption {
   Quiz_question    QuizQuestion @relation(fields: [quiz_question_id], references: [id])
   quiz_question_id String
   option           String
+  option_url       String?
   option_content   String
 }
 
@@ -164,4 +169,9 @@ enum quiz_question_type {
 enum quiz_type {
   Quiz
   Form
+}
+
+enum quiz_publish_status {
+  UnPublished
+  Published
 }

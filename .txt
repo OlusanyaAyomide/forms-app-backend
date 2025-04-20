@@ -1,5 +1,5 @@
 //Add option to view attempts from quiz and select live or draft
 
-- [ ] Functionality to edit quiz's info such as duration, themes, closed by e.t.c 
-- [ ] Add  functionality to generate option for questions
-- [ ] Add I
+
+- [ ] Add Flagged At Feature
+- [ ] handle Option arrangement

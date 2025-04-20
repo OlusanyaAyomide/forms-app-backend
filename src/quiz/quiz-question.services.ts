@@ -59,10 +59,12 @@ export class QuizQuestionService {
                                   update: {
                                     option: option.option,
                                     option_content: option.option_content,
+                                    option_url: option.option_url,
                                   },
                                   create: {
                                     option: option.option,
                                     option_content: option.option_content,
+                                    option_url: option.option_url
                                   },
                                 }))
                             } : {}),
@@ -73,6 +75,7 @@ export class QuizQuestionService {
                                 .map((option) => ({
                                   option: option.option,
                                   option_content: option.option_content,
+                                  option_url: option.option_url,
                                 }))
                             } : {})
                           },
@@ -89,6 +92,7 @@ export class QuizQuestionService {
                             create: question.options?.map((option) => ({
                               option: option.option,
                               option_content: option.option_content,
+                              option_url: option.option_url,
                             })),
                           },
                         },
@@ -134,7 +138,6 @@ export class QuizQuestionService {
       });
       return generatedQuiz;
     } catch (err) {
-      console.log(err)
       handlePrismaError(err);
     }
   }

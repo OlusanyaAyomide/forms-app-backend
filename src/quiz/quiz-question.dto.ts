@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsOptional, IsString, ValidateNested, ArrayMinSize, IsNotEmpty, IsUUID, IsInt, IsNumber, min, Length } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString, ValidateNested, IsNotEmpty, IsUUID, IsInt, IsNumber, min, Length } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class QuestionOption {
@@ -10,6 +10,9 @@ class QuestionOption {
   @IsString()
   option_content: string;
 
+  @IsOptional()
+  @IsString()
+  option_url?: string
 
   @IsOptional()
   @IsString()

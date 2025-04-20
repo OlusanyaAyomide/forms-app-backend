@@ -1,8 +1,8 @@
 import { Body, Controller, Get, NotFoundException, Param, Post, Put, Req, UnprocessableEntityException } from "@nestjs/common"
 import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto, QuizStatusPayloadDto, QuizStatusSchedulerDto, UpdateQuizDto } from "./quiz.dto";
-import { CompanyMetaData } from "src/auth/auth.types";
+import { PayloadMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";
-import { Company, Public } from "src/global/services/decorator.service";
+import { Company, Public, Role, RoleOnly } from "src/global/services/decorator.service";
 import { GeminiService } from "src/googleAi/gemini.service";
 import { cleanAndParseJson } from "src/global/services/text.service";
 import { QuizQuestionService } from "./quiz-question.services";
@@ -14,6 +14,7 @@ import { Prisma } from "@prisma/client";
 
 
 @Controller("quiz")
+@RoleOnly(Role.Company)
 export class QuizController {
   constructor(
     private readonly quizService: QuizService,
@@ -25,7 +26,7 @@ export class QuizController {
   @Post()
   async CreateQuizDto(
     @Body() createQuizDto: CreateQuizDto,
-    @Company() company: CompanyMetaData
+    @Company() company: PayloadMetaData
   ) {
     const quiz = await this.quizService.create({
       ...createQuizDto, Company: {

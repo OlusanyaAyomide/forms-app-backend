@@ -2,6 +2,7 @@ import { Reflector } from '@nestjs/core';
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { Request } from 'express';
 import { EnvVariable } from 'src/config/EnvVariables';
-import { IS_PUBLIC_KEY } from 'src/global/services/decorator.service';
+import { IS_PUBLIC_KEY, Role, ROLES_KEY } from 'src/global/services/decorator.service';
 
 
 @Injectable()
@@ -32,6 +33,11 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
+    const roles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -46,6 +52,10 @@ export class AuthGuard implements CanActivate {
       );
 
       request['company'] = payload;
+
+      if (roles && !roles.includes(payload.type)) {
+        throw new ForbiddenException('Access denied for your role');
+      }
     } catch {
       throw new UnauthorizedException();
     }

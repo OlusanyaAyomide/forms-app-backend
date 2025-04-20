@@ -5,8 +5,16 @@ import {
   ValidationArguments,
 } from 'class-validator';
 
+export enum Role {
+  Company = 'Company',
+  Member = 'Member',
+}
+
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+
+export const ROLES_KEY = 'roles';
+export const RoleOnly = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
 
 export const Company = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {

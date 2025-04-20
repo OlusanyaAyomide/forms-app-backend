@@ -4,6 +4,7 @@ import { Company, Prisma } from '@prisma/client';
 
 import { PrismaService } from 'src/global/prisma.service';
 import { comparePassword, hashPassword } from 'src/global/services/hash.service';
+import { PayloadMetaData } from './auth.types';
 
 @Injectable()
 export class AuthService {
@@ -84,7 +85,26 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException();
     }
-    const payload = { id: company.id, email: company.email };
+    const payload: PayloadMetaData = { id: company.id, email: company.email, type: "Company" };
+    return {
+      message: "sign In successful",
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async memberPasswordLessSignIn(
+    email: string,
+  ): Promise<Record<string, string>> {
+
+    const member = await this.prisma.member.findFirst({
+      where: { email }
+    })
+
+    if (!member) {
+      throw new UnauthorizedException('Member Not Found');
+    }
+
+    const payload: PayloadMetaData = { id: member.id, email: member.email, type: "Member" };
     return {
       message: "sign In successful",
       access_token: await this.jwtService.signAsync(payload),

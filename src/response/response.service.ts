@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Member } from '@prisma/client';
 import { PrismaService } from 'src/global/prisma.service';
 import { CheckEligibilityArgs } from 'src/quiz/quiz.types';
+import { createUpdateQuestionAttemptDto } from './response.dto';
+import { QuizService } from 'src/quiz/quiz.services';
 
 
 @Injectable()
@@ -80,7 +82,42 @@ export class ResponseService {
     })
   }
 
-  async updateQuizAttempt() {
+  async updateQuizAttempt(
+    { attemptId, attempts }:
+      { attemptId: string, attempts: createUpdateQuestionAttemptDto }) {
 
+    const memberQuizAttempts = await this.prisma.quizAttempts.update({
+      where: {
+        id: attemptId
+      },
+      data: {
+        attempt_answers: {
+          upsert: attempts.attempts.map(attempt => ({
+            where: {
+              // This requires a compound unique constraint on QuizQuestionAttempts in your Prisma schema:
+              // @@unique([quizAttemptsId, quizQuestionId])
+              quizAttemptsId_quizQuestionId: {
+                quizAttemptsId: attemptId,
+                quizQuestionId: attempt.question_id,
+              },
+            },
+            update: {
+              answer: attempt.answer,
+            },
+            create: {
+              answer: attempt.answer,
+              quizQuestionId: attempt.question_id,
+              // quizAttemptsId is implicitly linked by the nested write when using upsert on a related list
+            },
+          }))
+        }
+      },
+      include: {
+        attempt_answers: true
+      }
+    })
+
+    return memberQuizAttempts
   }
+
 }
