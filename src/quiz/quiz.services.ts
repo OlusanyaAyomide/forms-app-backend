@@ -123,4 +123,23 @@ export class QuizService {
       throw err
     }
   }
+
+  //will add more to this in the future
+  async attemptOverView(
+    { quizId }: { quizId: string }
+  ) {
+
+    const quiz = await this.prisma.quiz.findFirst({
+      where: { id: quizId },
+      include: {
+        attempts: {
+          where: {
+            status: "Submitted"
+          }
+        }
+      }
+    })
+
+    return quiz
+  }
 }

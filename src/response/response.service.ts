@@ -1,15 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { Member } from '@prisma/client';
 import { PrismaService } from 'src/global/prisma.service';
 import { CheckEligibilityArgs } from 'src/quiz/quiz.types';
 import { createUpdateQuestionAttemptDto } from './response.dto';
 import { QuizService } from 'src/quiz/quiz.services';
+import { getTimeDifferenceInSeconds } from 'src/global/services/date.service';
 
 
 @Injectable()
 export class ResponseService {
   constructor(
     private prisma: PrismaService,
+    private quizService: QuizService
   ) { }
   async findMemberByEmailOrCreate(
     { email, companyID }: { email: string, companyID: string }
@@ -118,6 +120,35 @@ export class ResponseService {
     })
 
     return memberQuizAttempts
+  }
+
+  async closeAllAttempt(
+    { quizId }: { quizId: string }) {
+
+    try {
+      const attempts = await this.prisma.quizAttempts.findMany({
+        where: {
+          quiz_id: quizId,
+          status: "Draft",
+        },
+      })
+
+      const currentDate = new Date()
+      await this.prisma.$transaction(attempts.map((attempt) => {
+        return this.prisma.quizAttempts.update({
+          where: { id: attempt.id },
+          data: {
+            status: "Submitted",
+            auto_submitted: true,
+            submitted_at: currentDate,
+            time_spent: getTimeDifferenceInSeconds(attempt.started_at, currentDate)
+          }
+        })
+      }))
+    } catch (err) {
+      console.log(err)
+      throw new UnprocessableEntityException("Quiz ID is invalid")
+    }
   }
 
 }

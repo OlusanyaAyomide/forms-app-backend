@@ -11,6 +11,7 @@ import { ScheduleService } from "src/global/services/scheduler.service";
 import { QuizSchedulePayload } from "./quiz.types";
 import { areDatesEqual } from "src/global/services/date.service";
 import { Prisma } from "@prisma/client";
+import { ResponseService } from "src/response/response.service";
 
 
 @Controller("quiz")
@@ -18,6 +19,7 @@ import { Prisma } from "@prisma/client";
 export class QuizController {
   constructor(
     private readonly quizService: QuizService,
+    private readonly responseService: ResponseService,
     private readonly quizSectionService: QuizQuestionService,
     private readonly geminiService: GeminiService,
     private readonly scheduleService: ScheduleService,
@@ -90,10 +92,10 @@ export class QuizController {
     return generatedQuiz
   }
 
-  @Put(":id")
+  @Put(":quiz_id")
   async updateQuiz(
     @Body() updateQuizDto: UpdateQuizDto,
-    @Param('id') id: string
+    @Param('quiz_id') quizId: string
   ) {
 
     const currentDate = new Date()
@@ -107,11 +109,13 @@ export class QuizController {
       } else if (updateQuizDto.status === "Closed") {
         extraFilter["closed_at"] = currentDate
         extraFilter["opened_at"] = null
+        //auto submit all quiz attempts
+        await this.responseService.closeAllAttempt({ quizId })
       }
     }
 
     const updatedQuiz = await this.quizService.update(
-      id, { ...updateQuizDto, ...extraFilter }
+      quizId, { ...updateQuizDto, ...extraFilter }
     )
 
     return updatedQuiz
@@ -204,10 +208,21 @@ export class QuizController {
       return null
     }
 
+    if (responsePayload.status === "Closed") {
+      this.responseService.closeAllAttempt({ quizId })
+    }
+
     await this.quizService.update(quizId, {
       status: responsePayload.status
     })
     return { message: "Updated Success" }
   }
 
+  @Get(":quiz_id/attempt/overview")
+  async GetQuizAttemptOverview(
+    @Param('quiz_id') quizId: string
+  ) {
+    const quizData = await this.quizService.attemptOverView({ quizId })
+    return quizData
+  }
 }

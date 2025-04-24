@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
   controllers: [ResponseController],
   providers: [
     ResponseService,
+    QuizService,
     PrismaService,
     AuthService,
     JwtService,

@@ -105,7 +105,7 @@ model QuizAttempts {
   started_at      DateTime               @default(now())
   submitted_at    DateTime?
   auto_submitted  Boolean?               @default(false)
-  time_spent      DateTime?
+  time_spent      Int?
   ip_address      String
   finger_print    String
   status          attempt_status?        @default(Draft)
