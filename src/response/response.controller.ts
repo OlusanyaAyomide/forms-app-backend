@@ -66,8 +66,8 @@ export class ResponseController {
       select: {
         id: true,
         company_id: true,
+        attempts: true,
       },
-      include: { attempts: true }
     })
 
     const isEligible = await this.responseService.isEligibleToTakeQuiz({

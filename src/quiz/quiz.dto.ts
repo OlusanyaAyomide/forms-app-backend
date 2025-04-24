@@ -155,9 +155,6 @@ export class CreateQuizDto {
 }
 
 export class CreateQuizSectionDto {
-  @IsNotEmpty()
-  @IsUUID()
-  quiz_id: string;
 
   @IsNotEmpty()
   @IsString()
@@ -181,7 +178,7 @@ export class CreateQuizSectionDto {
 export class QuizGeneratorDto {
   @IsNotEmpty()
   @IsString()
-  @Length(50, 10000)
+  @Length(50, 100000)
   text: string;
 }
 

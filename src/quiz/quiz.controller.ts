@@ -58,14 +58,15 @@ export class QuizController {
     return singleQuiz
   }
 
-  @Post("section")
+  @Post(":quiz_id/section")
   async createSection(
-    @Body() { quiz_id, ...createSectionDto }: CreateQuizSectionDto
+    @Body() createSectionDto: CreateQuizSectionDto,
+    @Param('quiz_id') quizId: string,
   ) {
 
     const section = await this.quizService.createQuizSection({
       ...createSectionDto, Quiz: {
-        connect: { id: quiz_id }
+        connect: { id: quizId }
       }
     })
     return section

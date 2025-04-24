@@ -5,12 +5,15 @@ import { Company, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/global/prisma.service';
 import { comparePassword, hashPassword } from 'src/global/services/hash.service';
 import { PayloadMetaData } from './auth.types';
+import { ConfigService } from '@nestjs/config';
+import { EnvVariable } from 'src/config/EnvVariables';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private readonly configService: ConfigService<EnvVariable>,
   ) { }
 
   async getCompany(
@@ -97,11 +100,10 @@ export class AuthService {
       { email: string, memberId: string }
   ): Promise<Record<string, string>> {
 
-
     const payload: PayloadMetaData = { id: memberId, email, type: "Member" };
     return {
       message: "sign In successful",
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(payload, { secret: this.configService.get("auth_secret") }),
     };
   }
 
