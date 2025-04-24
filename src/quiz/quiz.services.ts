@@ -38,7 +38,7 @@ export class QuizService {
       ...options
     });
     if (!quiz) {
-      throw new NotFoundException("Quiz ID is invalid")
+      throw new NotFoundException("Quiz has been closed or deleted by owner")
     }
     return quiz
   }

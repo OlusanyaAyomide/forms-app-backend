@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Put, Req, UnprocessableEntityException } from "@nestjs/common"
+import { Body, Controller, Get, NotFoundException, Param, Post, Put, UnprocessableEntityException } from "@nestjs/common"
 import { CreateQuizDto, CreateQuizSectionDto, QuizGeneratorDto, QuizStatusPayloadDto, QuizStatusSchedulerDto, UpdateQuizDto } from "./quiz.dto";
 import { PayloadMetaData } from "src/auth/auth.types";
 import { QuizService } from "./quiz.services";

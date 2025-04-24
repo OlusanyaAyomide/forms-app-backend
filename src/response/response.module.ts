@@ -3,12 +3,16 @@ import { PrismaService } from 'src/global/prisma.service';
 import { ResponseController } from './response.controller';
 import { ResponseService } from './response.service';
 import { QuizService } from 'src/quiz/quiz.services';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   controllers: [ResponseController],
   providers: [
     ResponseService,
     PrismaService,
+    AuthService,
+    JwtService,
     QuizService,
   ],
   exports: [ResponseService]

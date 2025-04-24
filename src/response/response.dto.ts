@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { IsArray, IsEmail, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
 
 export class ResponseDto {
   @IsUUID()
@@ -29,4 +29,11 @@ export class createUpdateQuestionAttemptDto {
   @ValidateNested({ each: true })
   @Type(() => QuestionAttemptDto)
   attempts: QuestionAttemptDto[]
+}
+
+export class ResponseAttemptDto {
+
+  @IsString()
+  @IsEmail()
+  email: string;
 }

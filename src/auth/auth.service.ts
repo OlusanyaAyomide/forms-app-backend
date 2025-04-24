@@ -93,18 +93,12 @@ export class AuthService {
   }
 
   async memberPasswordLessSignIn(
-    email: string,
+    { email, memberId }:
+      { email: string, memberId: string }
   ): Promise<Record<string, string>> {
 
-    const member = await this.prisma.member.findFirst({
-      where: { email }
-    })
 
-    if (!member) {
-      throw new UnauthorizedException('Member Not Found');
-    }
-
-    const payload: PayloadMetaData = { id: member.id, email: member.email, type: "Member" };
+    const payload: PayloadMetaData = { id: memberId, email, type: "Member" };
     return {
       message: "sign In successful",
       access_token: await this.jwtService.signAsync(payload),
