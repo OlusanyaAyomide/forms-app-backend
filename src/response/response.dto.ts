@@ -41,3 +41,15 @@ export class ResponseAttemptDto {
   @IsEmail()
   email: string;
 }
+
+
+export class FlagQuestionDto {
+
+  @IsUUID()
+  questionId: string
+
+  @IsOptional()
+  @IsString()
+  description: string
+
+}

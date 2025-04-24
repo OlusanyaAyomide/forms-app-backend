@@ -5,7 +5,7 @@ import { handlePrismaError } from 'src/global/services/prisma.error.service';
 
 @Injectable()
 export class QuizService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(data: Prisma.QuizCreateInput): Promise<Quiz> {
     return this.prisma.quiz.create({
@@ -140,5 +140,18 @@ export class QuizService {
     });
 
     return quiz;
+  }
+
+  async resolveAllQuestionFlag(
+    { questionId }: { questionId: string }
+  ) {
+    await this.prisma.questionFlags.updateMany({
+      where: {
+        quizQuestionId: questionId
+      },
+      data: {
+        status: "Closed"
+      }
+    })
   }
 }

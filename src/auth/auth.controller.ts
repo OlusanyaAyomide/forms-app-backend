@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   Post,
-  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateOrLogInCompanyDto } from './auth.dto';
@@ -12,7 +11,7 @@ import { Public } from 'src/global/services/decorator.service';
 
 @Controller('company')
 export class AuthController {
-  constructor(private readonly CompanyService: AuthService) {}
+  constructor(private readonly CompanyService: AuthService) { }
 
   @Get()
   getCompanies() {

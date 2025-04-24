@@ -14,6 +14,7 @@ import {
   QuizGeneratorDto,
   QuizStatusPayloadDto,
   QuizStatusSchedulerDto,
+  ResolveFlagDto,
   UpdateQuizDto,
 } from './quiz.dto';
 import { PayloadMetaData } from 'src/auth/auth.types';
@@ -46,7 +47,7 @@ export class QuizController {
     private readonly quizSectionService: QuizQuestionService,
     private readonly geminiService: GeminiService,
     private readonly scheduleService: ScheduleService,
-  ) {}
+  ) { }
 
   @Post()
   async CreateQuizDto(
@@ -160,7 +161,9 @@ export class QuizController {
   }
 
   @Post('question/:question_id/explanation/generate')
-  async generateQuestionExplanation(@Param('question_id') questionId: string) {
+  async generateQuestionExplanation(
+    @Param('question_id') questionId: string
+  ) {
     const question = await this.quizSectionService.getOneQuestion({
       id: questionId,
     });
@@ -251,8 +254,20 @@ export class QuizController {
   }
 
   @Get(':quiz_id/attempt/overview')
-  async GetQuizAttemptOverview(@Param('quiz_id') quizId: string) {
+  async GetQuizAttemptOverview(
+    @Param('quiz_id') quizId: string
+  ) {
     const quizData = await this.quizService.attemptOverView({ quizId });
     return quizData;
+  }
+
+  @Post("question/resolve-flag")
+  async ResolveFlag(
+    @Body() resolveFlagDto: ResolveFlagDto
+  ) {
+
+    await this.quizService.resolveAllQuestionFlag({ questionId: resolveFlagDto.questionId })
+
+    return { message: "Question Flag resolved" }
   }
 }

@@ -15,7 +15,7 @@ export class ResponseService {
   constructor(
     private prisma: PrismaService,
     private quizService: QuizService,
-  ) {}
+  ) { }
   async findMemberByEmailOrCreate({
     email,
     companyID,
@@ -163,8 +163,30 @@ export class ResponseService {
         }),
       );
     } catch (err) {
-      console.log(err);
       throw new UnprocessableEntityException('Quiz ID is invalid');
     }
+  }
+
+  async flagQuestion(
+    { memberId, description, questionId }:
+      { memberId: string, description?: string, questionId: string }
+  ) {
+
+    //If user already flagged question , simply return 
+    const isFlagged = await this.prisma.questionFlags.findFirst({
+      where: {
+        quizQuestionId: questionId, memberId
+      }
+    })
+
+    if (isFlagged) {
+      throw new UnprocessableEntityException("Question already flagged")
+    }
+
+    return await this.prisma.questionFlags.create({
+      data: {
+        memberId, description, quizQuestionId: questionId
+      }
+    })
   }
 }

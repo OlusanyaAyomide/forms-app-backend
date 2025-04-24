@@ -22,6 +22,7 @@ import { QuizService } from 'src/quiz/quiz.services';
 import { ResponseService } from './response.service';
 import {
   createUpdateQuestionAttemptDto,
+  FlagQuestionDto,
   ResponseAttemptDto,
 } from './response.dto';
 import { AuthService } from 'src/auth/auth.service';
@@ -35,7 +36,7 @@ export class ResponseController {
     private responseService: ResponseService,
     private authService: AuthService,
     private prismaService: PrismaService,
-  ) {}
+  ) { }
 
   @Public()
   @Get('quiz/:quiz_id/basic-info')
@@ -170,5 +171,18 @@ export class ResponseController {
     });
 
     return updatedAttempt;
+  }
+
+  @RoleOnly(Role.Member)
+  @Post('flag-question')
+  async flagQuestion(
+    @Body() flagQuestionDto: FlagQuestionDto,
+    @Company() member: PayloadMetaData,
+  ) {
+    const flaggedData = await this.responseService.flagQuestion({
+      memberId: member.id, questionId: flagQuestionDto.questionId, description: flagQuestionDto.description
+    })
+
+    return flaggedData
   }
 }

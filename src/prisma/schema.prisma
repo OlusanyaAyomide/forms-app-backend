@@ -29,6 +29,7 @@ model Member {
   first_name String?
   last_name  String?
   attempts   QuizAttempts[]
+  flags      QuestionFlags[]
 }
 
 model CompanyMember {
@@ -94,6 +95,19 @@ model QuizQuestion {
   created_at      DateTime               @default(now())
   question_order  Int
   answers         QuizQuestionAttempts[]
+  flags           QuestionFlags[]
+}
+
+model QuestionFlags {
+  id             String        @id() @default(uuid())
+  QuizQuestion   QuizQuestion? @relation(fields: [quizQuestionId], references: [id])
+  quizQuestionId String?
+  Member         Member?       @relation(fields: [memberId], references: [id])
+  memberId       String?
+  description    String?
+  status         flag_status   @default(Opened)
+  resolved_at    DateTime?
+  flagged_at     DateTime      @default(now())
 }
 
 model QuizAttempts {
@@ -174,4 +188,9 @@ enum quiz_type {
 enum quiz_publish_status {
   UnPublished
   Published
+}
+
+enum flag_status {
+  Opened
+  Closed
 }

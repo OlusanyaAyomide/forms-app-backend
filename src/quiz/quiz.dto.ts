@@ -6,12 +6,10 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
   MaxLength,
-  IsUUID,
   Min,
-  ValidateNested,
-  MinDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { quiz_access_type, quiz_status } from '@prisma/client';
@@ -210,4 +208,11 @@ export class QuizStatusSchedulerDto {
   @IsDate()
   @IsFutureDate({ message: 'Scheduled At must be in the future' })
   scheduled_at: Date;
+}
+
+
+export class ResolveFlagDto {
+
+  @IsUUID()
+  questionId: string
 }
