@@ -3,7 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { Company, Prisma } from '@prisma/client';
 
 import { PrismaService } from 'src/global/prisma.service';
-import { comparePassword, hashPassword } from 'src/global/services/hash.service';
+import {
+  comparePassword,
+  hashPassword,
+} from 'src/global/services/hash.service';
 import { PayloadMetaData } from './auth.types';
 import { ConfigService } from '@nestjs/config';
 import { EnvVariable } from 'src/config/EnvVariables';
@@ -14,7 +17,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private readonly configService: ConfigService<EnvVariable>,
-  ) { }
+  ) {}
 
   async getCompany(
     CompanyWhereUniqueInput: Prisma.CompanyWhereUniqueInput,
@@ -41,70 +44,81 @@ export class AuthService {
     });
   }
 
-  async createCompany(data: Prisma.CompanyCreateInput): Promise<Partial<Company>> {
-    const { password, ...CompanyData } = data
-    const hashedPassword = await hashPassword(password)
+  async createCompany(
+    data: Prisma.CompanyCreateInput,
+  ): Promise<Partial<Company>> {
+    const { password, ...CompanyData } = data;
+    const hashedPassword = await hashPassword(password);
     return this.prisma.company.create({
       data: {
-        ...CompanyData, password: hashedPassword
+        ...CompanyData,
+        password: hashedPassword,
       },
       select: {
         id: true,
         email: true,
-      }
+      },
     });
-
   }
 
   async findCompanyById(companyId: string) {
     return this.prisma.company.findFirst({
-      where: { id: companyId }
-    })
+      where: { id: companyId },
+    });
   }
 
   async findCompany(
     filter: Prisma.CompanyWhereInput,
-    options?: Prisma.CompanyFindFirstArgs
+    options?: Prisma.CompanyFindFirstArgs,
   ) {
     return this.prisma.company.findFirst({
       where: filter,
-      ...options
-    })
+      ...options,
+    });
   }
 
   async signIn(
     email: string,
     password: string,
   ): Promise<Record<string, string>> {
-
-    const company = await this.findCompany({ email }, { select: { email: true, password: true, id: true } })
+    const company = await this.findCompany(
+      { email },
+      { select: { email: true, password: true, id: true } },
+    );
 
     if (!company) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await comparePassword(password, company.password)
+    const isPasswordValid = await comparePassword(password, company.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException();
     }
-    const payload: PayloadMetaData = { id: company.id, email: company.email, type: "Company" };
+    const payload: PayloadMetaData = {
+      id: company.id,
+      email: company.email,
+      type: 'Company',
+    };
     return {
-      message: "sign In successful",
+      message: 'sign In successful',
       access_token: await this.jwtService.signAsync(payload),
     };
   }
 
-  async memberPasswordLessSignIn(
-    { email, memberId }:
-      { email: string, memberId: string }
-  ): Promise<Record<string, string>> {
-
-    const payload: PayloadMetaData = { id: memberId, email, type: "Member" };
+  async memberPasswordLessSignIn({
+    email,
+    memberId,
+  }: {
+    email: string;
+    memberId: string;
+  }): Promise<Record<string, string>> {
+    const payload: PayloadMetaData = { id: memberId, email, type: 'Member' };
     return {
-      message: "sign In successful",
-      access_token: await this.jwtService.signAsync(payload, { secret: this.configService.get("auth_secret") }),
+      message: 'sign In successful',
+      access_token: await this.jwtService.signAsync(payload, {
+        secret: this.configService.get('auth_secret'),
+      }),
     };
   }
-
 }

@@ -1,11 +1,11 @@
 export type EnvVariable = {
-  port: number
+  port: number;
   database: {
-    url: string
-    port: number
-  },
-  auth_secret: string
-  expiry: string
-  GEMINI_API_KEY: string
-  LIVE_URL: string
-}
+    url: string;
+    port: number;
+  };
+  auth_secret: string;
+  expiry: string;
+  GEMINI_API_KEY: string;
+  LIVE_URL: string;
+};

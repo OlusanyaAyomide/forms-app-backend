@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module } from '@nestjs/common';
 import { PrismaService } from 'src/global/prisma.service';
 import { ResponseController } from './response.controller';
 import { ResponseService } from './response.service';
@@ -16,7 +16,6 @@ import { JwtService } from '@nestjs/jwt';
     JwtService,
     QuizService,
   ],
-  exports: [ResponseService]
+  exports: [ResponseService],
 })
-
-export class ResponseModule { }
+export class ResponseModule {}

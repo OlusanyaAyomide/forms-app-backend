@@ -5,7 +5,9 @@ import { ConfigService } from '@nestjs/config';
 export const GoogleAIProvider: Provider = {
   provide: GoogleGenerativeAI,
   useFactory: (configService: ConfigService) => {
-    return new GoogleGenerativeAI(configService.get<string>('GEMINI_API_KEY', ''));
+    return new GoogleGenerativeAI(
+      configService.get<string>('GEMINI_API_KEY', ''),
+    );
   },
   inject: [ConfigService],
 };

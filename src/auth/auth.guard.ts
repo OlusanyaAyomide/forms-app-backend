@@ -11,19 +11,21 @@ import { ConfigService } from '@nestjs/config';
 
 import { Request } from 'express';
 import { EnvVariable } from 'src/config/EnvVariables';
-import { IS_PUBLIC_KEY, Role, ROLES_KEY } from 'src/global/services/decorator.service';
-
+import {
+  IS_PUBLIC_KEY,
+  Role,
+  ROLES_KEY,
+} from 'src/global/services/decorator.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private readonly configService: ConfigService<EnvVariable>,
-    private reflector: Reflector
-  ) { }
+    private reflector: Reflector,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -44,12 +46,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: this.configService.get("auth_secret", { infer: true })
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get('auth_secret', { infer: true }),
+      });
 
       request['company'] = payload;
 

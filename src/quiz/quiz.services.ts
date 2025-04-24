@@ -3,16 +3,13 @@ import { Quiz, Prisma, QuizSection } from '@prisma/client';
 import { PrismaService } from 'src/global/prisma.service';
 import { handlePrismaError } from 'src/global/services/prisma.error.service';
 
-
 @Injectable()
 export class QuizService {
-  constructor(
-    private prisma: PrismaService,
-  ) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(data: Prisma.QuizCreateInput): Promise<Quiz> {
     return this.prisma.quiz.create({
-      data
+      data,
     });
   }
 
@@ -20,54 +17,56 @@ export class QuizService {
     try {
       return await this.prisma.quiz.update({
         where: { id },
-        data
+        data,
       });
     } catch (err) {
-      handlePrismaError(err)
-      throw err
+      handlePrismaError(err);
+      throw err;
     }
-
   }
 
   async getOne(
     filter: Prisma.QuizWhereInput,
-    options?: Prisma.QuizFindFirstArgs
+    options?: Prisma.QuizFindFirstArgs,
   ): Promise<Quiz> {
     const quiz = await this.prisma.quiz.findFirst({
       where: filter,
-      ...options
+      ...options,
     });
     if (!quiz) {
-      throw new NotFoundException("Quiz has been closed or deleted by owner")
+      throw new NotFoundException('Quiz has been closed or deleted by owner');
     }
-    return quiz
+    return quiz;
   }
 
   async getQuizFromAttempt(
     filter: Prisma.QuizAttemptsWhereInput,
-    options?: Prisma.QuizFindFirstArgs): Promise<Quiz> {
+    options?: Prisma.QuizFindFirstArgs,
+  ): Promise<Quiz> {
     const attempt = await this.prisma.quizAttempts.findFirst({
       where: filter,
       include: {
         Quiz: {
-          select: { id: true }
-        }
-      }
-    })
+          select: { id: true },
+        },
+      },
+    });
 
     if (!attempt) {
-      throw new NotFoundException("Attempt ID is invalid")
+      throw new NotFoundException('Attempt ID is invalid');
     }
 
-    return this.getOne({ id: attempt.Quiz.id }, options)
+    return this.getOne({ id: attempt.Quiz.id }, options);
   }
 
   async getMany(
     where?: Prisma.QuizWhereInput,
     take?: number,
     skip?: number,
-    orderBy?: Prisma.QuizOrderByWithRelationInput | Prisma.QuizOrderByWithRelationInput[],
-    include?: Prisma.QuizInclude
+    orderBy?:
+      | Prisma.QuizOrderByWithRelationInput
+      | Prisma.QuizOrderByWithRelationInput[],
+    include?: Prisma.QuizInclude,
   ): Promise<{ quizzes: Quiz[]; total: number }> {
     const [quizzes, total] = await Promise.all([
       this.prisma.quiz.findMany({
@@ -75,71 +74,71 @@ export class QuizService {
         take,
         skip,
         orderBy,
-        include
+        include,
       }),
-      this.prisma.quiz.count({ where })
+      this.prisma.quiz.count({ where }),
     ]);
 
     return {
       quizzes,
-      total
+      total,
     };
   }
 
   async delete(id: string): Promise<Quiz> {
     return this.prisma.quiz.delete({
-      where: { id }
+      where: { id },
     });
   }
 
-  async createQuizSection(data: Prisma.QuizSectionCreateInput): Promise<QuizSection> {
-
+  async createQuizSection(
+    data: Prisma.QuizSectionCreateInput,
+  ): Promise<QuizSection> {
     const quizId = data.Quiz.connect?.id;
 
-    await this.prisma.utils.ensureQuizExists(quizId)
+    await this.prisma.utils.ensureQuizExists(quizId);
 
     const quizExists = await this.prisma.quiz.findFirst({
       where: { id: quizId },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!quizExists) {
       throw new NotFoundException(`Quiz with ID ${quizId} not found`);
     }
     return this.prisma.quizSection.create({
-      data
+      data,
     });
   }
 
-  async updateQuizSection(id: string, data: Prisma.QuizSectionUpdateInput): Promise<QuizSection> {
+  async updateQuizSection(
+    id: string,
+    data: Prisma.QuizSectionUpdateInput,
+  ): Promise<QuizSection> {
     try {
       return this.prisma.quizSection.update({
         where: { id },
-        data
+        data,
       });
-    }
-    catch (err) {
-      handlePrismaError(err)
-      throw err
+    } catch (err) {
+      handlePrismaError(err);
+      throw err;
     }
   }
 
   //will add more to this in the future
-  async attemptOverView(
-    { quizId }: { quizId: string }
-  ) {
-
+  async attemptOverView({ quizId }: { quizId: string }) {
     const quiz = await this.prisma.quiz.findFirst({
       where: { id: quizId },
       include: {
         attempts: {
           where: {
-            status: "Submitted"
-          }
-        }
-      }
-    })
+            status: 'Submitted',
+          },
+        },
+      },
+    });
 
-    return quiz
+    return quiz;
   }
 }

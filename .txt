@@ -1,6 +1,6 @@
 //Add option to view attempts from quiz and select live or draft
 
 - [ ] Reduce attempt jwt duration
-- [ ] Add auto submit flag on quiz , when auto_submit save all attempt on quiz close
 - [ ] Add Flagged At Feature
+- [ ] Add quiz attempt overview analytics included
 - [ ] handle Option arrangement

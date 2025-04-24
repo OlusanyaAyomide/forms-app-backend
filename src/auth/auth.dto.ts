@@ -7,5 +7,4 @@ export class CreateOrLogInCompanyDto {
   @IsNotEmpty()
   @Length(7, 20)
   password: string;
-
 }

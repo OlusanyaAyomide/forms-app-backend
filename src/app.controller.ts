@@ -7,13 +7,13 @@ import { EnvVariable } from 'src/config/EnvVariables';
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly configService: ConfigService<EnvVariable>
-  ) { }
+    private readonly configService: ConfigService<EnvVariable>,
+  ) {}
 
   @Get()
   getHello(): string {
     // console.log(process.env.DATABASE_URL)
-    console.log(this.configService.get("database.url", { infer: true }))
+    console.log(this.configService.get('database.url', { infer: true }));
     return this.appService.getHello();
   }
 }

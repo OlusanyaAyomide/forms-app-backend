@@ -12,11 +12,14 @@ import { QuizModule } from './quiz/quiz.module';
 import { ResponseModule } from './response/response.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-    load: [configuration]
-  }),
-    CompanyModule, QuizModule, ResponseModule
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    CompanyModule,
+    QuizModule,
+    ResponseModule,
   ],
   controllers: [AppController],
   providers: [
@@ -25,8 +28,8 @@ import { ResponseModule } from './response/response.module';
     JwtService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard
-    }
+      useClass: AuthGuard,
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}

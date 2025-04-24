@@ -16,12 +16,12 @@ import { EnvVariable } from 'src/config/EnvVariables';
         global: true,
         secret: configService.get('auth_secret', { infer: true }),
         signOptions: {
-          expiresIn: configService.get('expiry', { infer: true })
+          expiresIn: configService.get('expiry', { infer: true }),
         },
       }),
       inject: [ConfigService],
     }),
   ],
-  exports: [AuthService]
+  exports: [AuthService],
 })
-export class CompanyModule { }
+export class CompanyModule {}

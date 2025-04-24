@@ -1,15 +1,13 @@
-import { Request } from "express"
+import { Request } from 'express';
 
 export type PayloadMetaData = {
-  id: string
-  email: string
-  iat?: number,
-  type: "Company" | "Member"
-  exp?: number
-}
+  id: string;
+  email: string;
+  iat?: number;
+  type: 'Company' | 'Member';
+  exp?: number;
+};
 
 export type CustomRequest = {
-  company: PayloadMetaData
-} & Request
-
-
+  company: PayloadMetaData;
+} & Request;

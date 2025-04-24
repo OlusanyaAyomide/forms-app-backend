@@ -1,7 +1,7 @@
 export function cleanAndParseJson(inputString: string) {
   try {
     // Remove unnecessary escape characters and trim whitespace
-    const cleanedString = inputString.replace(/\n/g, "").trim();
+    const cleanedString = inputString.replace(/\n/g, '').trim();
     const jsonObject = JSON.parse(cleanedString);
 
     return jsonObject;
@@ -9,4 +9,3 @@ export function cleanAndParseJson(inputString: string) {
     return null;
   }
 }
-

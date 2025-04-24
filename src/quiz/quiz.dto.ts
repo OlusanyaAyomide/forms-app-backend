@@ -1,17 +1,25 @@
 import {
-  IsBoolean, IsDate, IsEnum, IsInt, IsNotEmpty,
-  IsOptional, IsString, Length, MaxLength, IsUUID, Min,
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+  IsUUID,
+  Min,
   ValidateNested,
-  MinDate
+  MinDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { quiz_access_type, quiz_status } from '@prisma/client';
 import { IsFutureDate } from 'src/global/services/decorator.service';
 
-
 enum QuizType {
   Quiz = 'Quiz',
-  Form = 'Form'
+  Form = 'Form',
 }
 
 export class UpdateQuizDto {
@@ -155,7 +163,6 @@ export class CreateQuizDto {
 }
 
 export class CreateQuizSectionDto {
-
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -187,20 +194,20 @@ export class QuizStatusPayloadDto {
   status: quiz_status;
 
   @IsString()
-  quiz_id: string
+  quiz_id: string;
 
   @Type(() => Date)
   @IsDate()
-  scheduled_at: Date
+  scheduled_at: Date;
 }
 
 export class QuizStatusSchedulerDto {
   @IsEnum(quiz_status)
   @IsString()
-  status: quiz_status
+  status: quiz_status;
 
   @Type(() => Date)
   @IsDate()
-  @IsFutureDate({ message: "Scheduled At must be in the future" })
+  @IsFutureDate({ message: 'Scheduled At must be in the future' })
   scheduled_at: Date;
 }

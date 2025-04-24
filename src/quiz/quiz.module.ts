@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module } from '@nestjs/common';
 import { PrismaService } from 'src/global/prisma.service';
 import { QuizController } from './quiz.controller';
 import { QuizService } from './quiz.services';
@@ -17,9 +17,8 @@ import { ResponseService } from 'src/response/response.service';
     ResponseService,
     GeminiService,
     ScheduleService,
-    GoogleAIProvider
+    GoogleAIProvider,
   ],
-  exports: [QuizService]
+  exports: [QuizService],
 })
-
-export class QuizModule { }
+export class QuizModule {}
